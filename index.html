@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบฐานข้อมูล ไมโครซอฟท์ ซีควลเซิร์ฟเวอร์ (Microsoft SQL Server)</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&family=Prompt:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --color-bg: #fff6e2;
+      --color-black: #121212;
+      --color-white: #ffffff;
+      --color-yellow: #febf00;
+      --color-pink: #d755b3;
+      --color-orange: #fc7c2c;
+      --color-blue: #4a71f6;
+      --color-green: #1cbc7c;
+      --color-purple: #7460e4;
+      --font-main: 'Prompt', sans-serif;
+      --font-cute: 'Mali', cursive;
+      --border-thick: 4px solid var(--color-black);
+      --shadow-cute: 6px 6px 0 var(--color-black);
+      --shadow-cute-hover: 8px 8px 0 var(--color-black);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--color-bg);
+      color: var(--color-black);
+      line-height: 1.8;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: var(--font-cute);
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .highlight-text {
+      background-color: var(--color-yellow);
+      padding: 0 10px;
+      border-radius: 8px;
+      display: inline-block;
+      border: 2px solid var(--color-black);
+      transform: rotate(-2deg);
+    }
+
+    .highlight-pink {
+      background-color: var(--color-pink);
+      color: white;
+    }
+
+    .highlight-blue {
+      background-color: var(--color-blue);
+      color: white;
+    }
+
+    .highlight-green {
+      background-color: var(--color-green);
+      color: white;
+    }
+
+    .highlight-orange {
+      background-color: var(--color-orange);
+      color: white;
+    }
+
+    section {
+      padding: 5rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem 2.5rem;
+      background-color: var(--color-orange);
+      color: var(--color-white);
+      text-decoration: none;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      font-family: var(--font-cute);
+      border: var(--border-thick);
+      box-shadow: var(--shadow-cute);
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: var(--shadow-cute-hover);
+    }
+
+    .btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--color-black);
+    }
+
+    .grid {
+      display: grid;
+      gap: 2.5rem;
+    }
+
+    .grid-cols-2 {
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    }
+
+    .grid-cols-3 {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    .grid-cols-4 {
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
+    .card {
+      background: var(--color-white);
+      border-radius: 20px;
+      padding: 2.5rem;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-cute);
+      transition: transform 0.2s ease;
+      position: relative;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      background: var(--color-bg);
+      border-bottom: var(--border-thick);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-brand {
+      font-weight: 800;
+      font-size: 1.5rem;
+      font-family: var(--font-cute);
+    }
+
+    .navbar-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .navbar-links a {
+      text-decoration: none;
+      color: var(--color-black);
+      font-weight: 600;
+      border: 2px solid transparent;
+      padding: 0.25rem 0.75rem;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .navbar-links a:hover {
+      background-color: var(--color-yellow);
+      border-color: var(--color-black);
+    }
+
+    /* Hero */
+    .hero-wrapper {
+      padding-top: 100px;
+      background-image: radial-gradient(var(--color-black) 2px, transparent 2px);
+      background-size: 30px 30px;
+    }
+
+    .hero {
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      margin-bottom: 2rem;
+    }
+
+    .hero p {
+      font-size: clamp(1.1rem, 2vw, 1.3rem);
+      max-width: 800px;
+      margin-bottom: 3rem;
+      background: white;
+      padding: 1.5rem;
+      border-radius: 16px;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-cute);
+    }
+
+    /* Members */
+    .member-frame {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      margin: 0 auto 1.5rem auto;
+      border: var(--border-thick);
+      background-color: var(--color-pink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-white);
+      font-weight: bold;
+      text-align: center;
+      padding: 1rem;
+      position: relative;
+      overflow: hidden;
+      font-family: var(--font-cute);
+    }
+
+    .member-frame img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+    }
+
+    /* Timeline */
+    .timeline-container {
+      display: flex;
+      gap: 3rem;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .timeline {
+      position: relative;
+      flex: 1;
+      min-width: 300px;
+      padding-left: 2.5rem;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0.75rem;
+      top: 0;
+      bottom: 0;
+      width: 6px;
+      background: var(--color-black);
+      border-radius: 3px;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 2rem;
+      background: var(--color-white);
+      padding: 1.5rem;
+      border-radius: 16px;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-cute);
+    }
+
+    .timeline-item::after {
+      content: '';
+      position: absolute;
+      left: -2.45rem;
+      top: 1.5rem;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 50%;
+      background-color: var(--color-yellow);
+      border: var(--border-thick);
+    }
+
+    .timeline-year {
+      font-weight: 800;
+      font-family: var(--font-cute);
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .image-placeholder {
+      width: 100%;
+      height: 300px;
+      background-color: var(--color-white);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-cute);
+      overflow: hidden;
+      font-family: var(--font-cute);
+      color: var(--color-black);
+    }
+
+    .image-placeholder img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Animation classes */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.6s ease-out;
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .footer {
+      background-color: var(--color-blue);
+      color: white;
+      text-align: center;
+      padding: 3rem 2rem;
+      border-top: var(--border-thick);
+    }
+
+    /* Utility */
+    .flex-row {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .flex-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .sticker {
+      position: absolute;
+      border: var(--border-thick);
+      background: var(--color-yellow);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-family: var(--font-cute);
+      font-weight: bold;
+      transform: rotate(-10deg);
+      box-shadow: 4px 4px 0 var(--color-black);
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-brand">ฐานข้อมูล SQL Server</div>
+    <div class="navbar-links">
+      <a href="#hero">หน้าแรก</a>
+      <a href="#members">สมาชิก</a>
+      <a href="#history">ประวัติ</a>
+      <a href="#background">ความเป็นมา</a>
+      <a href="#competitors">คู่แข่ง</a>
+      <a href="#reasons">จุดเด่น</a>
+    </div>
+  </nav>
+
+  <div class="hero-wrapper">
+    <section id="hero" class="hero reveal">
+      <div class="sticker" style="top: -20px; left: 10%;">🌟 งานกลุ่มพรีเซนเทชั่น!</div>
+      <div class="sticker highlight-pink" style="bottom: 20%; right: 5%; transform: rotate(15deg);">ฐานข้อมูลสุดเจ๋ง 💻
+      </div>
+
+      <h1><span class="highlight-text highlight-blue">Microsoft SQL Server</span><br />ระบบจัดการฐานข้อมูลระดับองค์กร
+      </h1>
+      <p>
+        ค้นพบประวัติศาสตร์อันยาวนาน ความเป็นมา คู่แข่งในตลาด <br>
+        และเจาะลึกเหตุผลว่าทำไมบริษัทระดับโลกถึงยังยอมจ่ายเงินเพื่อเลือกใช้งานระบบฐานข้อมูลนี้
+      </p>
+      <a href="#members" class="btn">เริ่มกันเลย! 🚀</a>
+    </section>
+  </div>
+
+  <!-- สมาชิกกลุ่ม -->
+  <section id="members" class="reveal">
+    <h2 class="text-center" style="font-size: 3rem; margin-bottom: 2rem;"><span class="highlight-text">ทีมงานของเรา
+        👾</span></h2>
+    <p class="text-center" style="margin-bottom: 3rem; font-weight: 500;">
+
+    </p>
+    <div class="grid grid-cols-4">
+
+      <div class="card text-center">
+        <div class="member-frame" style="background-color: var(--color-pink);">
+          ใส่รูปตรงนี้!
+          <img src="images/member-1.jpg" alt="ภาพสมาชิกคนที่ 1" onerror="this.style.opacity='0'"
+            onload="this.style.opacity='1'">
+        </div>
+        <h3 style="font-size: 0.95rem; white-space: nowrap;">นาย จักราวุธ สอนสุนทร</h3>
+        <p style="font-weight:600; font-size: 1rem; margin-top: 0.5rem;">รหัส: 68032542</p>
+      </div>
+
+      <div class="card text-center">
+        <div class="member-frame" style="background-color: var(--color-yellow); color: var(--color-black);">
+          ใส่รูปตรงนี้!
+          <img src="images/member-2.jpg" alt="ภาพสมาชิกคนที่ 2" onerror="this.style.opacity='0'"
+            onload="this.style.opacity='1'">
+        </div>
+        <h3 style="font-size: 0.95rem; white-space: nowrap;">นางสาว ชนิตา สิงหน</h3>
+        <p style="font-weight:600; font-size: 1rem; margin-top: 0.5rem;">รหัส: 68015741</p>
+      </div>
+
+      <div class="card text-center">
+        <div class="member-frame" style="background-color: var(--color-green);">
+          ใส่รูปตรงนี้!
+          <img src="images/member-3.jpg" alt="ภาพสมาชิกคนที่ 3" onerror="this.style.opacity='0'"
+            onload="this.style.opacity='1'">
+        </div>
+        <h3 style="font-size: 0.95rem; white-space: nowrap;">นาย ชยุต ปัญญา</h3>
+        <p style="font-weight:600; font-size: 1rem; margin-top: 0.5rem;">รหัส: 68049541</p>
+      </div>
+
+      <div class="card text-center">
+        <div class="member-frame" style="background-color: var(--color-green);">
+          ใส่รูปตรงนี้!
+          <img src="images/member-4.jpg" alt="ภาพสมาชิกคนที่ 4" onerror="this.style.opacity='0'"
+            onload="this.style.opacity='1'">
+        </div>
+        <h3 style="font-size: 0.95rem; white-space: nowrap;">นาย รัฐภูมิ จันเครือยิ้ม</h3>
+        <p style="font-weight:600; font-size: 1rem; margin-top: 0.5rem;">รหัส: 68029125</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ประวัติความเป็นมา -->
+  <section id="history" class="reveal">
+    <div class="sticker highlight-green" style="top: -10px; right: 15%; transform: rotate(5deg);">Timeline ⏳</div>
+    <h2 class="text-center" style="font-size: 2.8rem; margin-bottom: 1rem;"><span
+        class="highlight-text highlight-pink">ประวัติของ SQL Server 📖</span></h2>
+    <p class="text-center"
+      style="margin-bottom: 4rem; max-width: 800px; margin-left: auto; margin-right: auto; font-weight: 500;">
+      จุดเริ่มต้นของการพัฒนาระบบฐานข้อมูลระดับตำนาน
+    </p>
+
+    <div class="timeline-container">
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-year">ค.ศ. 1989: จุดเริ่มต้นของตำนาน</div>
+          <div style="display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap;">
+            <p style="flex: 1; min-width: 200px;">ไมโครซอฟท์ จับมือกับ Sybase และ Ashton-Tate เปิดตัว SQL Server รุ่นแรก
+              (เวอร์ชัน 1.0) ซึ่งถูกออกแบบมาเพื่อทำงานบนระบบปฏิบัติการ OS/2
+              ถือเป็นก้าวแรกและจุดเริ่มต้นที่สำคัญของการพัฒนาระบบฐานข้อมูลแบบเชิงสัมพันธ์ (Relational Database)
+              ที่เน้นเจาะกลุ่มผู้ใช้งานระดับองค์กรโดยเฉพาะ</p>
+            <div class="image-placeholder" style="flex: 0 0 150px; height: 100px; border-radius: 12px; margin: 0;">
+              <img
+                src="https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?auto=format&fit=crop&q=80&w=600&v=2"
+                alt="จุดเริ่มต้น" style="object-fit: cover;">
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">ค.ศ. 1995: เติบโตและพัฒนาอย่างอิสระ</div>
+          <div style="display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap;">
+            <p style="flex: 1; min-width: 200px;">ไมโครซอฟท์ได้ตัดสินใจแยกทางกับ Sybase อย่างเป็นทางการ
+              และเดินหน้าพัฒนาเอนจินของฐานข้อมูลด้วยตนเองทั้งหมด เพื่อให้ระบบสามารถดึงประสิทธิภาพของ Windows NT
+              ออกมาใช้งานได้อย่างเต็มที่ ทำให้ SQL Server กลายเป็นตัวเลือกอันดับต้นๆ สำหรับองค์กร</p>
+            <div class="image-placeholder" style="flex: 0 0 150px; height: 100px; border-radius: 12px; margin: 0;">
+              <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=600"
+                alt="เติบโตอย่างอิสระ" style="object-fit: cover;">
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">ค.ศ. 2000-2012: ยุคแห่งคลังข้อมูลระดับองค์กร</div>
+          <div style="display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap;">
+            <p style="flex: 1; min-width: 200px;">มีการอัปเกรดครั้งใหญ่ เพิ่มเครื่องมือระดับองค์กรมากมาย เช่น ระบบ Data
+              Warehousing, เครื่องมือวิเคราะห์ข้อมูล Business Intelligence
+              รวมถึงการเปิดตัวระบบรักษาความพร้อมใช้งานขั้นสูงอย่าง AlwaysOn Availability Groups
+              เพื่อป้องกันปัญหาเซิร์ฟเวอร์ล่ม</p>
+            <div class="image-placeholder" style="flex: 0 0 150px; height: 100px; border-radius: 12px; margin: 0;">
+              <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=600"
+                alt="ยุคคลังข้อมูล" style="object-fit: cover;">
+            </div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">ค.ศ. 2017-ปัจจุบัน: ทะยานสู่คลาวด์และ Linux</div>
+          <div style="display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap;">
+            <p style="flex: 1; min-width: 200px;">ไมโครซอฟท์สร้างความประหลาดใจด้วยการทำให้ SQL Server ทำงานบนแพลตฟอร์ม
+              <strong>Linux</strong> ได้เป็นครั้งแรก ทำลายกำแพงที่เคยผูกขาดเฉพาะ Windows
+              และในปัจจุบันยังผสานการทำงานเข้ากับคลาวด์ Microsoft Azure ได้อย่างลึกซึ้ง
+            </p>
+            <div class="image-placeholder" style="flex: 0 0 150px; height: 100px; border-radius: 12px; margin: 0;">
+              <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=600"
+                alt="สู่คลาวด์และ Linux" style="object-fit: cover;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex: 1; min-width: 350px; display: flex; flex-direction: column; gap: 2rem;">
+        <div class="image-placeholder" style="height: 400px; border-radius: 12px; overflow: hidden;">
+          <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800&v=3"
+            alt="เทคโนโลยีฐานข้อมูล">
+        </div>
+        <div class="image-placeholder" style="height: 400px; border-radius: 12px; overflow: hidden;">
+          <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=800&v=4"
+            alt="ศูนย์ข้อมูล Data Center">
+        </div>
+        <div class="image-placeholder" style="height: 400px; border-radius: 12px; overflow: hidden;">
+          <img src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80&w=800&v=5"
+            alt="คลาวด์และเครือข่าย">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- บริบทและความเป็นมา -->
+  <section id="background" class="reveal">
+    <h2 class="text-center" style="font-size: 2.8rem; margin-bottom: 3rem;">ความสำคัญของระบบจัดการฐานข้อมูล 💡</h2>
+
+    <div class="flex-row">
+      <div style="flex: 1 1 400px;">
+        <div class="image-placeholder" style="margin-bottom: 2rem; height: 250px;">
+          <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800"
+            alt="Data Analysis">
+        </div>
+        <h3 style="margin-bottom: 1rem; font-size:1.8rem;">เมื่อไฟล์ Excel ไม่เพียงพอ...</h3>
+        <p style="margin-bottom: 1rem; font-weight: 500;">ปัญหาเมื่อใช้ไฟล์ธรรมดาเก็บข้อมูลองค์กร:</p>
+        <ul style="margin-left: 1.5rem; line-height: 2; font-weight: 500;">
+          <li>ข้อมูลซ้ำซ้อน เปลืองพื้นที่</li>
+          <li>ข้อมูลขัดแย้ง เพราะอัปเดตไม่พร้อมกัน</li>
+          <li>ทำงานพร้อมกันหลายคนไม่ได้</li>
+          <li>ความปลอดภัยต่ำ จำกัดสิทธิ์การเข้าถึงยาก</li>
+        </ul>
+      </div>
+
+      <div class="card" style="flex: 1 1 400px; background-color: var(--color-yellow);">
+        <h3 style="margin-bottom: 1.5rem; font-size:1.8rem;">RDBMS เข้ามาช่วยอย่างไร?</h3>
+        <div class="flex-col">
+          <div class="card" style="padding: 1.5rem;">
+            <h4 style="margin-bottom: 0.25rem;">✨ โครงสร้างข้อมูลสัมพันธ์กัน</h4>
+            <p>แบ่งตารางย่อยๆ แล้วเชื่อมด้วย Key ลดการซ้ำซ้อน</p>
+          </div>
+          <div class="card" style="padding: 1.5rem;">
+            <h4 style="margin-bottom: 0.25rem;">✨ ความน่าเชื่อถือ (ACID)</h4>
+            <p>ทำธุรกรรมสมบูรณ์ 100% ถ้าผิดพลาดก็ยกเลิกทั้งหมด ข้อมูลไม่หาย</p>
+          </div>
+          <div class="card" style="padding: 1.5rem;">
+            <h4 style="margin-bottom: 0.25rem;">✨ ขยายตัวระดับโลก</h4>
+            <p>รองรับผู้ใช้เป็นล้านๆ คนพร้อมกัน ค้นหาข้อมูลได้ในเสี้ยววินาที</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- คู่แข่ง -->
+  <section id="competitors" class="reveal">
+    <h2 class="text-center" style="font-size: 2.8rem; margin-bottom: 3rem;"><span
+        class="highlight-text highlight-orange">คู่แข่งในตลาด 🥊</span></h2>
+
+    <div class="grid grid-cols-2">
+      <!-- Oracle -->
+      <div class="card" style="display: flex; gap: 1.5rem; align-items: flex-start;">
+        <div
+          style="min-width: 70px; height: 70px; background: #e11d48; color: white; border: var(--border-thick); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.8rem; font-family: var(--font-cute);">
+          Or</div>
+        <div>
+          <h3 style="margin-bottom: 0.25rem;">Oracle Database</h3>
+          <p style="font-size: 0.9rem; font-weight: 700; color: #e11d48; margin-bottom: 0.5rem;">ราคาสูงสุดในตลาด!</p>
+          <p>คู่แข่งอันดับ 1 ครองตลาดธนาคาร โดดเด่นเรื่องความเสถียร แต่ราคาแพงและดูแลยาก</p>
+        </div>
+      </div>
+
+      <!-- MySQL -->
+      <div class="card" style="display: flex; gap: 1.5rem; align-items: flex-start;">
+        <div
+          style="min-width: 70px; height: 70px; background: #0284c7; color: white; border: var(--border-thick); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.8rem; font-family: var(--font-cute);">
+          My</div>
+        <div>
+          <h3 style="margin-bottom: 0.25rem;">MySQL</h3>
+          <p style="font-size: 0.9rem; font-weight: 700; color: #0284c7; margin-bottom: 0.5rem;">ใช้งานฟรี 100%</p>
+          <p>ราชาแห่งเว็บไซต์ นิยมใช้คู่กับ PHP แต่ขาดฟีเจอร์วิเคราะห์ข้อมูลระดับลึก</p>
+        </div>
+      </div>
+
+      <!-- PostgreSQL -->
+      <div class="card" style="display: flex; gap: 1.5rem; align-items: flex-start;">
+        <div
+          style="min-width: 70px; height: 70px; background: #1e3a8a; color: white; border: var(--border-thick); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.8rem; font-family: var(--font-cute);">
+          Pg</div>
+        <div>
+          <h3 style="margin-bottom: 0.25rem;">PostgreSQL</h3>
+          <p style="font-size: 0.9rem; font-weight: 700; color: #1e3a8a; margin-bottom: 0.5rem;">ใช้งานฟรี 100%</p>
+          <p>ฐานข้อมูลล้ำสมัย มาตรฐานสากล รองรับข้อมูลแผนที่และ JSON ได้ดีเยี่ยม</p>
+        </div>
+      </div>
+
+      <!-- IBM Db2 -->
+      <div class="card" style="display: flex; gap: 1.5rem; align-items: flex-start;">
+        <div
+          style="min-width: 70px; height: 70px; background: #374151; color: white; border: var(--border-thick); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.6rem; font-family: var(--font-cute);">
+          Db2</div>
+        <div>
+          <h3 style="margin-bottom: 0.25rem;">IBM Db2</h3>
+          <p style="font-size: 0.9rem; font-weight: 700; color: #374151; margin-bottom: 0.5rem;">สำหรับระบบใหญ่</p>
+          <p>มักใช้ในระบบเมนเฟรมของไอบีเอ็ม เป็นฐานข้อมูลที่เก่าแก่และสำคัญมาก</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ทำไมองค์กรถึงยังยอมจ่ายเงิน? -->
+  <section id="reasons" class="reveal">
+    <h2 class="text-center" style="font-size: 2.8rem; margin-bottom: 3rem;">ทำไมองค์กรยังยอมจ่าย <span
+        class="highlight-text highlight-blue">ค่าลิขสิทธิ์แพงๆ? 💰</span></h2>
+
+    <div class="grid grid-cols-2" style="gap: 3rem;">
+      <div class="flex-col">
+        <div class="card"
+          style="background-color: var(--color-pink); color: white; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; text-align: left;">
+          <div class="image-placeholder"
+            style="flex: 0 0 120px; height: 120px; border-radius: 12px; border: 2px solid white; margin: 0;">
+            <img src="https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?auto=format&fit=crop&q=80&w=600"
+              alt="Microsoft Ecosystem" style="object-fit: cover;">
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <h3 style="margin-bottom: 0.5rem; font-size: 1.5rem;">1. เข้ากันได้กับ Microsoft Ecosystem</h3>
+            <p>บูรณาการกับ Windows Server และ .NET ได้อย่างสมบูรณ์โดยไม่ต้องลงแรงเขียนโค้ดเพิ่ม ช่วยลดต้นทุนในการพัฒนา
+            </p>
+          </div>
+        </div>
+        <div class="card"
+          style="background-color: var(--color-blue); color: white; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; text-align: left;">
+          <div class="image-placeholder"
+            style="flex: 0 0 120px; height: 120px; border-radius: 12px; border: 2px solid white; margin: 0;">
+            <img src="https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?auto=format&fit=crop&q=80&w=600"
+              alt="เครื่องมือดูแลระบบครบจบ" style="object-fit: cover;">
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <h3 style="margin-bottom: 0.5rem; font-size: 1.5rem;">2. เครื่องมือดูแลระบบครบจบ</h3>
+            <p>มาพร้อม SQL Server Management Studio (SSMS) ที่ทรงพลัง รวมถึงระบบทำ Report (SSRS) มาให้ฟรีในตัว</p>
+          </div>
+        </div>
+        <div class="card"
+          style="background-color: var(--color-green); color: white; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; text-align: left;">
+          <div class="image-placeholder"
+            style="flex: 0 0 120px; height: 120px; border-radius: 12px; border: 2px solid white; margin: 0;">
+            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=600"
+              alt="ทีมซัพพอร์ตระดับโลก" style="object-fit: cover;">
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <h3 style="margin-bottom: 0.5rem; font-size: 1.5rem;">3. ทีมซัพพอร์ตระดับโลก</h3>
+            <p>ระบบล่ม? มีวิศวกร Microsoft ช่วยแก้ปัญหาทันที ลดความสูญเสียหลักล้าน และรับประกันความพร้อมใช้งานสูง</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 2rem;">
+        <div class="image-placeholder" style="flex: 1;">
+          <img src="https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&q=80&w=800"
+            alt="ความปลอดภัยสูงสุด">
+        </div>
+        <div class="card" style="background-color: var(--color-black); color: white;">
+          <h3 style="color: var(--color-yellow); margin-bottom: 1rem; font-size: 1.8rem;">🔒 ปลอดภัยสูงสุด</h3>
+          <p>
+            SQL Server มีช่องโหว่น้อยที่สุดในโลกติดต่อกันหลายปี มีระบบเข้ารหัสทุกขั้นตอน ตอบโจทย์ PDPA แบบหายห่วง!
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <h3 style="margin-bottom: 1rem; font-size: 1.5rem; font-family: var(--font-cute);">วิชา [ICT24267] | คณะ
+      [เทคโนโลยีสารสนเทศและการสื่อสาร]</h3>
+    <p style="font-weight: 500; font-size: 1.1rem; margin-bottom: 1rem;">จัดทำโดย: กลุ่มบุญมีแต่กรรมบัง 🎨</p>
+    <p style="font-size: 0.9rem; opacity: 0.8;">© 2569 โครงงานนำเสนอระบบฐานข้อมูล</p>
+  </footer>
+
+  <script>
+    function reveal() {
+      var reveals = document.querySelectorAll(".reveal");
+      for (var i = 0; i < reveals.length; i++) {
+        var windowHeight = window.innerHeight;
+        var elementTop = reveals[i].getBoundingClientRect().top;
+        var elementVisible = 100;
+        if (elementTop < windowHeight - elementVisible) {
+          reveals[i].classList.add("active");
+        }
+      }
+    }
+    window.addEventListener("scroll", reveal);
+    reveal();
+  </script>
+</body>
+
+</html>
