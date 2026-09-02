@@ -5,11 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ระบบฐานข้อมูล ไมโครซอฟท์ ซีควลเซิร์ฟเวอร์ (Microsoft SQL Server)</title>
-  
+
   <!-- Open Graph Meta Tags สำหรับแก้ปัญหารูป Thumbnail -->
   <meta property="og:title" content="ระบบฐานข้อมูล ไมโครซอฟท์ ซีควลเซิร์ฟเวอร์ (Microsoft SQL Server)">
   <meta property="og:description" content="งานนำเสนอประวัติ ความเป็นมา และจุดเด่นของฐานข้อมูลระดับตำนานจาก Microsoft">
-  <meta property="og:image" content="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1200">
+  <meta property="og:image"
+    content="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1200">
   <meta property="og:url" content="https://chanitha29.github.io/-ICT24267-/">
   <meta property="og:type" content="website">
 
@@ -387,16 +388,52 @@
 
     /* Responsive Design สำหรับมือถือและ iPad */
     @media (max-width: 768px) {
-      .navbar { padding: 1rem; flex-direction: column; gap: 1rem; }
-      .navbar-links { flex-wrap: wrap; justify-content: center; }
-      .hero h1 { font-size: 2.2rem; }
-      section { padding: 4rem 1rem; }
-      .grid-cols-2, .grid-cols-3, .grid-cols-4 { grid-template-columns: 1fr; }
-      .timeline-container { flex-direction: column; gap: 2rem; }
-      .timeline { padding-left: 1.5rem; min-width: 100%; }
-      .timeline::before { left: 0.25rem; }
-      .timeline-item::after { left: -1.95rem; }
-      .flex-row { flex-direction: column; }
+      .navbar {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .navbar-links {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+
+      section {
+        padding: 4rem 1rem;
+      }
+
+      .grid-cols-2,
+      .grid-cols-3,
+      .grid-cols-4 {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline-container {
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .timeline {
+        padding-left: 1.5rem;
+        min-width: 100%;
+      }
+
+      .timeline::before {
+        left: 0.25rem;
+      }
+
+      .timeline-item::after {
+        left: -1.95rem;
+      }
+
+      .flex-row {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -513,7 +550,7 @@
           <div class="timeline-year">ค.ศ. 1995: เติบโตและพัฒนาอย่างอิสระ</div>
           <div style="display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap;">
             <p style="flex: 1; min-width: 200px;">ไมโครซอฟท์ได้ตัดสินใจแยกทางกับ Sybase อย่างเป็นทางการ
-              และเดินหน้าพัฒนาเอนจินของฐานข้อมูลด้วยตนเองทั้งหมด เพื่อให้ระบบสามารถดึงประสิทธิภาพของ Windows NT
+              และเดินหน้าพัฒนาเอนจิน ของฐานข้อมูลด้วยตนเองทั้งหมด เพื่อให้ระบบสามารถดึงประสิทธิภาพของ Windows NT
               ออกมาใช้งานได้อย่างเต็มที่ ทำให้ SQL Server กลายเป็นตัวเลือกอันดับต้นๆ สำหรับองค์กร</p>
             <div class="image-placeholder" style="flex: 0 0 150px; height: 100px; border-radius: 12px; margin: 0;">
               <img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=600"
