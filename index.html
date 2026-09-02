@@ -300,6 +300,12 @@
       border-radius: 16px;
       border: var(--border-thick);
       box-shadow: var(--shadow-cute);
+      transition: all 0.3s ease;
+    }
+
+    .timeline-item:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-cute-hover);
     }
 
     .timeline-item::after {
@@ -387,6 +393,41 @@
       font-weight: bold;
       transform: rotate(-10deg);
       box-shadow: 4px 4px 0 var(--color-black);
+    }
+
+    /* Back to Top Button */
+    .back-to-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 50px;
+      height: 50px;
+      background-color: var(--color-pink);
+      color: white;
+      border-radius: 50%;
+      border: var(--border-thick);
+      box-shadow: var(--shadow-cute);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      text-decoration: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .back-to-top.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .back-to-top:hover {
+      transform: translateY(-5px);
+      background-color: var(--color-yellow);
+      color: var(--color-black);
     }
 
     /* Responsive Design สำหรับมือถือและ iPad */
@@ -763,6 +804,7 @@
     </div>
   </section>
 
+
   <footer class="footer">
     <h3 style="margin-bottom: 1rem; font-size: 1.5rem; font-family: var(--font-cute);">วิชา [ICT24267] | คณะ
       [เทคโนโลยีสารสนเทศและการสื่อสาร]</h3>
@@ -770,7 +812,25 @@
     <p style="font-size: 0.9rem; opacity: 0.8;">© 2569 โครงงานนำเสนอระบบฐานข้อมูล</p>
   </footer>
 
+  <!-- ปุ่มเลื่อนขึ้นบนสุด -->
+  <a href="#" class="back-to-top" id="backToTop">⬆️</a>
+
   <script>
+    // Back to top button logic
+    const backToTopBtn = document.getElementById("backToTop");
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 300) {
+        backToTopBtn.classList.add("show");
+      } else {
+        backToTopBtn.classList.remove("show");
+      }
+    });
+
+    backToTopBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
     function reveal() {
       var reveals = document.querySelectorAll(".reveal");
       for (var i = 0; i < reveals.length; i++) {
